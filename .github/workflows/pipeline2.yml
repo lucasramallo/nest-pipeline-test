@@ -13,25 +13,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout do código do repositório
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Executa o OWASP Dependency-Check usando a ação oficial
-      - name: Run OWASP Dependency-Check
-        uses: dependency-check/dependency-check-action@v4.3.2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Depcheck
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
         with:
-          project-name: 'Node.js Project'
+          project: 'test'
           path: '.'
           format: 'HTML'
-          out: 'dependency-check-report.html'
+          out: 'reports' # this is the default, no need to specify unless you wish to override it
           args: >
-            --enableExperimental
             --failOnCVSS 7
-
-      # Faz upload do relatório gerado como artefato
-      - name: Upload Dependency-Check Report
-        uses: actions/upload-artifact@v4
+            --enableRetired
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
         with:
-          name: dependency-check-report
-          path: dependency-check-report.html
+          name: Depcheck report
+          path: ${{github.workspace}}/reports
