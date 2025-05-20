@@ -27,7 +27,6 @@ jobs:
             --failOnCVSS 7
             --enableRetired
             --enableExperimental # Adicionado para suportar Node.js
-            --nvdApiKey ${{ secrets.NVD_API_KEY }} # Adicionado para acelerar atualizações do NVD
       - name: Upload Test results
         uses: actions/upload-artifact@v4 # Atualizado para a versão mais recente
         with:
