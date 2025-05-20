@@ -1,27 +1,54 @@
-on: [push]
+name: OWASP Dependency Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  depchecktest:
+  dependency-check:
     runs-on: ubuntu-latest
-    name: depecheck_test
+    name: Dependency Check Analysis
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build project with Maven
-        run: mvn clean install
-      - name: Depcheck
-        uses: dependency-check/Dependency-Check_Action@main
-        id: Depcheck
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js and pnpm
+        uses: actions/setup-node@v4
         with:
-          project: 'test'
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install project dependencies
+        run: pnpm install
+
+      - name: Cache Dependency-Check NVD Data
+        uses: actions/cache@v4
+        with:
+          path: ~/.dependency-check
+          key: ${{ runner.os }}-owasp-nvd-cache
+          restore-keys: |
+            ${{ runner.os }}-owasp-nvd-cache
+
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/dependency-check-action@main
+        with:
+          project: 'NestJS Project'
           path: '.'
           format: 'HTML'
-          out: 'reports'
+          out: 'dependency-check-report'
           args: >
+            --enableExperimental
+            --nodePackageSkipDevDependencies
             --failOnCVSS 7
-            --enableRetired
-      - name: Upload Test results
-        uses: actions/upload-artifact@master
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v4
         with:
-          name: Depcheck report
-          path: ${{github.workspace}}/reports
+          name: dependency-check-report
+          path: dependency-check-report/dependency-check-report.html
