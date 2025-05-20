@@ -22,11 +22,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20' # Versão do Node.js
-          cache: 'npm' # Cache para dependências npm
+          cache: 'pnpm' # Cache para dependências pnpm
 
-      # Instala dependências do projeto
+      # Instala o pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # Instala dependências do projeto com pnpm
       - name: Install project dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       # Instala o OWASP Dependency-Check
       - name: Install OWASP Dependency-Check
@@ -37,19 +41,20 @@ jobs:
           unzip dependency-check-9.2.0-release.zip
           chmod +x dependency-check/bin/dependency-check.sh
 
-      # Executa o OWASP Dependency-Check
+      # Executa o OWASP Dependency-Check com failOnCVSS
       - name: Run Dependency-Check
         run: |
           ./dependency-check/bin/dependency-check.sh \
             --project "Node.js Project" \
             --scan . \
-            --format HTML \
-            --out dependency-check-report.html \
-            --noupdate
+            --format ALL \
+            --out dependency-check-report \
+            --noupdate \
+            --failOnCVSS 7
 
       # Faz upload do relatório como artefato
       - name: Upload Dependency-Check Report
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
-          path: dependency-check-report.html
+          path: dependency-check-report/
