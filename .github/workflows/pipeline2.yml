@@ -22,21 +22,19 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Run OWASP Dependency-Check
-        uses: stevespringett/dependency-check-action@main
+      - name: Depcheck
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
         with:
-          project: 'NestJS Project'
-          path: './'
+          project: 'test'
+          path: '.'
           format: 'HTML'
-          out: 'dependency-check-report'
+          out: 'reports' # this is the default, no need to specify unless you wish to override it
           args: >
-            --enableExperimental
-            --nodePackageSkipDevDependencies
             --failOnCVSS 7
-
-      - name: Upload Dependency-Check Report
-        uses: actions/upload-artifact@v4
+            --enableRetired
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
         with:
-          name: dependency-check-report
-          path: dependency-check-report/dependency-check-report.html
+          name: Depcheck report
+          path: ${{github.workspace}}/reports
