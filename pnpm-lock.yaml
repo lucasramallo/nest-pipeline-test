@@ -17,6 +17,9 @@ importers:
       '@nestjs/platform-express':
         specifier: ^11.0.1
         version: 11.1.1(@nestjs/common@11.1.1(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.1)
+      node-serialize:
+        specifier: 0.0.4
+        version: 0.0.4
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -2551,6 +2554,10 @@ packages:
 
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
+
+  node-serialize@0.0.4:
+    resolution: {integrity: sha512-Q7krX4keanOtqYrNWGlTWk0jSYPewtMpzs5AoV0NieqTtQkLRGq5e0R+iuTA3npbpk7B1zJy6dZ7o9wmmuEYmA==}
+    engines: {'0': node >=0.6.0}
 
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
@@ -6190,6 +6197,8 @@ snapshots:
   node-int64@0.4.0: {}
 
   node-releases@2.0.19: {}
+
+  node-serialize@0.0.4: {}
 
   normalize-path@3.0.0: {}
 
