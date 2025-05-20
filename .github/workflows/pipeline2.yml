@@ -40,6 +40,11 @@ jobs:
           restore-keys: |
             nvd-database-${{ runner.os }}-
 
+      # Inicializa o banco de dados NVD
+      - name: Initialize NVD Database
+        run: |
+          ./dependency-check/bin/dependency-check.sh --updateonly --data dependency-check/data
+
       # Executa o OWASP Dependency-Check no projeto Node.js e falha em vulnerabilidades críticas
       - name: Run OWASP Dependency-Check
         run: |
@@ -50,7 +55,6 @@ jobs:
             --out dependency-check-report.html \
             --data dependency-check/data \
             --enableExperimental \
-            --noupdate \
             --failOnCVSS 7
 
       # Faz upload do relatório gerado como artefato
