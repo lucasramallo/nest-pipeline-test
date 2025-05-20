@@ -26,7 +26,9 @@ jobs:
 
       # Instala o pnpm
       - name: Install pnpm
-        run: npm install -g pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 'latest' # Ou especifique uma versão, ex.: '8'
 
       # Instala dependências do projeto com pnpm
       - name: Install project dependencies
