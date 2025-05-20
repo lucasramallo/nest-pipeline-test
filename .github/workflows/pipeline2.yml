@@ -1,15 +1,11 @@
-name: OWASP Dependency Check
+name: OWASP Dependency-Check
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: [push, pull_request]
 
 jobs:
-  dependency-check:
+  depcheck:
+    name: Dependency Check
     runs-on: ubuntu-latest
-    name: Dependency Check Analysis
 
     steps:
       - name: Checkout repository
@@ -24,22 +20,14 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install project dependencies
+      - name: Install dependencies
         run: pnpm install
 
-      - name: Cache Dependency-Check NVD Data
-        uses: actions/cache@v4
-        with:
-          path: ~/.dependency-check
-          key: ${{ runner.os }}-owasp-nvd-cache
-          restore-keys: |
-            ${{ runner.os }}-owasp-nvd-cache
-
       - name: Run OWASP Dependency-Check
-        uses: dependency-check/dependency-check-action@main
+        uses: stevespringett/dependency-check-action@main
         with:
           project: 'NestJS Project'
-          path: '.'
+          path: './'
           format: 'HTML'
           out: 'dependency-check-report'
           args: >
@@ -47,7 +35,7 @@ jobs:
             --nodePackageSkipDevDependencies
             --failOnCVSS 7
 
-      - name: Upload HTML Report
+      - name: Upload Dependency-Check Report
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
