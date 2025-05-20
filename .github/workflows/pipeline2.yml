@@ -1,65 +1,27 @@
-name: OWASP Dependency-Check
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  dependency-check:
+  depchecktest:
     runs-on: ubuntu-latest
-
+    name: depecheck_test
     steps:
-      # Checkout do código do repositório
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Configura o ambiente Java (necessário para o Dependency-Check)
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build project with Maven
+        run: mvn clean install
+      - name: Depcheck
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
         with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      # Instala o OWASP Dependency-Check
-      - name: Install OWASP Dependency-Check
-        run: |
-          wget -q https://github.com/jeremylong/DependencyCheck/releases/download/v10.0.4/dependency-check-10.0.4-release.zip
-          unzip dependency-check-10.0.4-release.zip
-          chmod +x dependency-check/bin/dependency-check.sh
-
-      # Cria um diretório para cache do banco de vulnerabilidades
-      - name: Cache NVD Database
-        uses: actions/cache@v4
-        with:
-          path: dependency-check/data
-          key: nvd-database-${{ runner.os }}-${{ hashFiles('dependency-check/data/**') }}
-          restore-keys: |
-            nvd-database-${{ runner.os }}-
-
-      # Inicializa o banco de dados NVD
-      - name: Initialize NVD Database
-        run: |
-          ./dependency-check/bin/dependency-check.sh --updateonly --data dependency-check/data
-
-      # Executa o OWASP Dependency-Check no projeto Node.js e falha em vulnerabilidades críticas
-      - name: Run OWASP Dependency-Check
-        run: |
-          ./dependency-check/bin/dependency-check.sh \
-            --project "Node.js Project" \
-            --scan . \
-            --format HTML \
-            --out dependency-check-report.html \
-            --data dependency-check/data \
-            --enableExperimental \
+          project: 'test'
+          path: '.'
+          format: 'HTML'
+          out: 'reports'
+          args: >
             --failOnCVSS 7
-
-      # Faz upload do relatório gerado como artefato
-      - name: Upload Dependency-Check Report
-        uses: actions/upload-artifact@v4
+            --enableRetired
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
         with:
-          name: dependency-check-report
-          path: dependency-check-report.html
+          name: Depcheck report
+          path: ${{github.workspace}}/reports
