@@ -3,32 +3,53 @@ name: OWASP Dependency-Check
 on:
   push:
     branches:
-      - '*' # Executa em qualquer branch para push
+      - main
   pull_request:
     branches:
-      - '*' # Executa em qualquer branch para pull request
+      - main
 
 jobs:
   dependency-check:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4 # Atualizado para a versão mais recente
-      - name: Depcheck
-        uses: dependency-check/Dependency-Check_Action@main
-        id: Depcheck
+      # Checkout do código
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Configura o Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          project: 'test'
-          path: '.'
-          format: 'HTML'
-          out: 'reports'
-          args: >
-            --failOnCVSS 7
-            --enableRetired
-            --enableExperimental # Adicionado para suportar Node.js
-      - name: Upload Test results
-        uses: actions/upload-artifact@v4 # Atualizado para a versão mais recente
+          node-version: '20' # Versão do Node.js
+          cache: 'npm' # Cache para dependências npm
+
+      # Instala dependências do projeto
+      - name: Install project dependencies
+        run: npm ci
+
+      # Instala o OWASP Dependency-Check
+      - name: Install OWASP Dependency-Check
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jre
+          wget https://github.com/jeremylong/DependencyCheck/releases/download/v9.2.0/dependency-check-9.2.0-release.zip
+          unzip dependency-check-9.2.0-release.zip
+          chmod +x dependency-check/bin/dependency-check.sh
+
+      # Executa o OWASP Dependency-Check
+      - name: Run Dependency-Check
+        run: |
+          ./dependency-check/bin/dependency-check.sh \
+            --project "Node.js Project" \
+            --scan . \
+            --format HTML \
+            --out dependency-check-report.html \
+            --noupdate
+
+      # Faz upload do relatório como artefato
+      - name: Upload Dependency-Check Report
+        uses: actions/upload-artifact@v4
         with:
-          name: Depcheck report
-          path: ${{ github.workspace }}/reports
+          name: dependency-check-report
+          path: dependency-check-report.html
