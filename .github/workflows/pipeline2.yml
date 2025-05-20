@@ -3,10 +3,10 @@ name: OWASP Dependency-Check
 on:
   push:
     branches:
-      - main
+      - '*' # Executa em qualquer branch para push
   pull_request:
     branches:
-      - main
+      - '*' # Executa em qualquer branch para pull request
 
 jobs:
   dependency-check:
@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4 # Atualizado para a versão mais recente
       - name: Depcheck
         uses: dependency-check/Dependency-Check_Action@main
         id: Depcheck
@@ -22,12 +22,14 @@ jobs:
           project: 'test'
           path: '.'
           format: 'HTML'
-          out: 'reports' # this is the default, no need to specify unless you wish to override it
+          out: 'reports'
           args: >
             --failOnCVSS 7
             --enableRetired
+            --enableExperimental # Adicionado para suportar Node.js
+            --nvdApiKey ${{ secrets.NVD_API_KEY }} # Adicionado para acelerar atualizações do NVD
       - name: Upload Test results
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v4 # Atualizado para a versão mais recente
         with:
           name: Depcheck report
-          path: ${{github.workspace}}/reports
+          path: ${{ github.workspace }}/reports
