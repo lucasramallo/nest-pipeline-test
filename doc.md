@@ -25,3 +25,5 @@ O aviso que você mencionou indica que o OWASP Dependency-Check está sendo exec
 ## Dependency-check-action
 
 Para evitar o download manual do Dependency-Check e a atualização do NVD é usar uma ação pré-existente do GitHub Marketplace, como a ação dependency-check/dependency-check-action
+
+#### Com dependencia multer 1.4.4-lts.1 que foi reportada em 19 de maio de 2025
