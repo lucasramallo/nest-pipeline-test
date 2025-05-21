@@ -24,7 +24,6 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "lockfile-lint-api": "^5.9.2",
-    "multer": "1.4.4-lts.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
