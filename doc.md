@@ -27,3 +27,13 @@ O aviso que você mencionou indica que o OWASP Dependency-Check está sendo exec
 Para evitar o download manual do Dependency-Check e a atualização do NVD é usar uma ação pré-existente do GitHub Marketplace, como a ação dependency-check/dependency-check-action
 
 #### Com dependencia multer 1.4.4-lts.1 que foi reportada em 19 de maio de 2025
+
+```shell
+pnpm install multer@2.0.0
+```
+
+![alt text](image.png)
+
+Identificado!
+
+#### Com dependencia Tough-Cookie 4.1.3 a vulnerabilidade CVE-2025-49237 foi reportada em 13 de maio de 2025
